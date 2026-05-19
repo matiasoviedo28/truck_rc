@@ -1,10 +1,13 @@
 # 🚛 RC Truck NeutronLab — ESP32 Control System
 
-![RC Truck NeutronLab](images/truck.png)
+![RC Truck 3d](images/diseno_cabina.png)
+![RC Truck 3d](images/1.jpeg)
 
 Sistema de control inalámbrico para camión RC con tolva volcadora basado en ESP32, con interfaz web embebida accesible desde cualquier celular sin necesidad de aplicación.
 
 El proyecto reemplaza los radiocontroles tradicionales por un control vía WiFi (modo Access Point) servido directamente desde el ESP32, replicando el comportamiento de un camión real: cardán/toma de fuerza, bloqueos cruzados de seguridad, luces de freno con timer, balizas, indicadores de giro automáticos y failsafe por pérdida de conexión.
+
+![RC Truck 3d](images/2.jpeg)
 
 ---
 
@@ -76,6 +79,8 @@ Todos los archivos `.stl` del chasis, carrocería, tolva y soportes están dispo
 El paso a paso completo para la construcción mecánica y eléctrica del truck está disponible en el archivo [`guia_armado.md`](guia_armado.md).
 
 Allí se detalla el orden de ensamblaje recomendado, conexiones eléctricas paso a paso, calibración del Vref del driver, y consejos prácticos para evitar errores comunes durante el armado.
+
+![RC Truck 3d](images/diesno_chasis.png)
 
 ---
 
@@ -155,6 +160,8 @@ El ESP32 funciona como **Access Point WiFi independiente**. No se conecta a ning
 - ❌ El celular no tendrá acceso a internet mientras esté conectado al truck
 
 ### Conexión desde el celular
+
+![RC Truck NeutronLab](images/19216841.jpeg)
 
 1. **Red WiFi:** `Camion-RC-NeutronLab`
 2. **Contraseña:** `12345678`
