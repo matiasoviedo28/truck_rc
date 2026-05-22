@@ -3,6 +3,10 @@
 #include <ESP32Servo.h>
 #include <AccelStepper.h>
 
+// V.3.1 - 22/06/2026
+// Matias Oviedo - NeutronLab
+// https://github.com/matiasoviedo28/truck_rc
+
 // --- CONFIGURACIÓN DE HARDWARE ---
 const int pinServo    = 2;
 const int pinMotorA   = 12;
@@ -14,6 +18,7 @@ const int pinGiroIzq  = 25;
 const int pinGiroDer  = 33;
 const int pinStep     = 32;
 const int pinDir      = 4;
+const int pinEnable   = 5;
 
 // --- DIRECCIÓN (SERVO) ---
 const int OFFSET_RECTO = 95;
@@ -319,11 +324,13 @@ void handleControl() {
   // 3. Comandos de tolva solo con cardán acoplado y motor detenido
   if ((tCmd == 'U' || tCmd == 'D') && cardanAcoplado && motorState == 0
       && tolvaEstado == T_LISTO) {
+    digitalWrite(pinEnable, LOW);   // Energizar driver antes de mover
+    delay(2);                        // Tiempo de activación del driver
     if (tCmd == 'U') {
-      stepper.moveTo(0);
+      stepper.moveTo(PASOS_MAXIMOS); // Subir: avanzar hasta la posición máxima
       tolvaEstado = T_SUBIENDO;
     } else {
-      stepper.moveTo(-PASOS_MAXIMOS);
+      stepper.moveTo(0);             // Bajar: regresar a posición de reposo
       tolvaEstado = T_BAJANDO;
     }
   }
@@ -398,6 +405,7 @@ void checkFailsafe() {
       lowLights = false;
       // Detener tolva si estaba moviéndose
       stepper.stop();
+      digitalWrite(pinEnable, HIGH);  // Desenergizar motor ante pérdida de señal
       // Servo queda en su última posición (no tocamos direccion.write())
     }
   }
@@ -410,6 +418,7 @@ void updateTolva() {
   stepper.run();
   if (tolvaEstado != T_LISTO && stepper.distanceToGo() == 0) {
     tolvaEstado = T_LISTO;
+    digitalWrite(pinEnable, HIGH);  // Desenergizar motor al llegar al destino
   }
 }
 
@@ -434,9 +443,11 @@ void setup() {
   pinMode(pinGiroDer, OUTPUT);
 
   // Stepper
+  pinMode(pinEnable, OUTPUT);
+  digitalWrite(pinEnable, HIGH);  // Motor desactivado al arrancar (posición: ABAJO = 0)
   stepper.setMaxSpeed(STEPPER_VMAX);
   stepper.setAcceleration(STEPPER_ACEL);
-  stepper.setCurrentPosition(0);
+  stepper.setCurrentPosition(0);  // 0 = tolva abajo (reposo), PASOS_MAXIMOS = arriba
 
   // WiFi AP
   WiFi.softAP(ssid, password);
