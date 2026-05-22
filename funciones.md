@@ -21,6 +21,20 @@
 - Velocidad: 1000 pasos/s, aceleración 400 pasos/s².
 - Botón se ilumina durante el movimiento y se apaga al terminar.
 - Comportamiento "un toque": va sola hasta el tope, sin STOP intermedio.
+- Posición de reposo al encender: **tolva abajo = 0 pasos**. Subir avanza hacia `PASOS_MAXIMOS`, bajar regresa a `0`.
+
+#### Gestión de energía del driver (pin ENABLE)
+
+El driver A4988 se controla mediante el pin **GPIO 5** (ENABLE), evitando que el motor consuma corriente innecesariamente cuando está quieto.
+
+| Momento | Estado ENABLE | Efecto |
+|---------|--------------|--------|
+| Arranque del sistema | HIGH (inactivo) | Motor frío, sin consumo |
+| Se recibe comando UP/DOWN | LOW (activo) + delay 2 ms | Driver despierta antes del primer pulso |
+| Tolva llega al destino | HIGH (inactivo) | Corriente cortada al terminar |
+| Failsafe por pérdida de WiFi | HIGH (inactivo) | Motor se detiene y se desenergiza |
+
+> **Por qué importa:** un NEMA17 parado pero energizado puede alcanzar 50–70 °C en pocos minutos y drenar la batería continuamente. Con el control de ENABLE el motor solo consume durante el movimiento efectivo.
 
 ### Sistema de luces
 
@@ -57,7 +71,7 @@ Cuando el ESP32 detecta pérdida de conexión:
 | Componente | Acción |
 |------------|--------|
 | Motor de tracción | **Apagado inmediato** (PWM a 0) |
-| Tolva (paso a paso) | **Detención** con `stepper.stop()` |
+| Tolva (paso a paso) | **Detención** con `stepper.stop()` + driver desenergizado (ENABLE = HIGH) |
 | Servo de dirección | **Queda quieto** en su última posición |
 | Luces bajas | Apagadas |
 | Balizas | Mantienen parpadeo (señal visual de vehículo abandonado) |

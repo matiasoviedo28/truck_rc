@@ -43,6 +43,7 @@
 | **27** | Luz freno | Salida digital LED freno (timer 1500 ms) |
 | **32** | STEP (A4988) | Pulsos al motor paso a paso de tolva |
 | **33** | Giro derecho | Salida digital LED giro der |
+| **5** | ENABLE (A4988) | Habilitación del driver — LOW = activo, HIGH = desactivado |
 
 ---
 
@@ -56,7 +57,7 @@
 | GND (lógica) | GND del ESP32 | **Crítico:** debe compartir GND con ESP32 |
 | STEP | GPIO 32 | Pulsos de paso |
 | DIR | GPIO 4 | Sentido de giro |
-| ENABLE | GND | Motor siempre energizado |
+| ENABLE | GPIO 5 | Controlado por software — no conectar a GND |
 | RESET | SLEEP | Puenteados entre sí |
 | 1A, 1B, 2A, 2B | Bobinas NEMA17 | Identificar con multímetro en continuidad |
 
